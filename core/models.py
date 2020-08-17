@@ -1,46 +1,26 @@
 from django.db import models
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import User
 
+class Paciente(models.Model):
 
-class Paciente(models.Model, BaseUserManager):
-    use_in_migrations = True
+     escolha_sexo=(
+         ("M","Masculino"),
+         ("F","Feminino"),
+         ("N", "Nenhuma das Opções")
+     )
 
-    escolha_sexo=(
-        ("M","Masculino"),
-        ("F","Feminino"),
-        ("N", "Nenhuma das Opções")
-    )
+     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+     nome_paciente=models.CharField(max_length=250, blank=False, verbose_name='Nome do paciente')
+     data_nascimento=models.DateField(blank=False,verbose_name='Data de Nascimento')
+     sexo=models.CharField(max_length=1, choices=escolha_sexo, blank=False, null=False)
+     email=models.EmailField(max_length=60, blank=False, verbose_name='E-mail', unique=True)
+     data_criacao = models.DateTimeField(auto_now=True)
 
-    nome_paciente=models.CharField(max_length=250, blank=False, verbose_name='Nome do paciente')
+     class Meta:
+         db_table = 'paciente'
 
-    data_nascimento=models.DateField(blank=False,verbose_name='Data de Nascimento')
-    sexo=models.CharField(max_length=1, choices=escolha_sexo, blank=False, null=False)
-    email=models.EmailField(max_length=60, blank=False, verbose_name='E-mail', unique=True)
-    senha=models.CharField(max_length= 20,blank=False)
-    data_criacao = models.DateTimeField(auto_now=True)
-
-    def _create_user(self, email, senha, **extra_fields):
-        """
-        Creates and saves a User with the given email and password.
-        """
-        if not email:
-            raise ValueError('The given email must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(senha)
-        user.save(using=self._db)
-        return user
-
-    def create_user(self, email, senha=None, **extra_fields):
-        extra_fields.setdefault('is_superuser', False)
-        return self._create_user(email, senha, **extra_fields)
-
-
-    class Meta:
-        db_table = 'paciente'
-
-    def __str__(self):
-        return self.nome_paciente
+     def __str__(self):
+         return self.User.name
 
 
 class Refeicao(models.Model):

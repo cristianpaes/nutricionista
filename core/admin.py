@@ -3,7 +3,8 @@ from core.models import *
 
 @admin.register(Paciente)
 class PacienteAdmin(admin.ModelAdmin):
-    list_display = ['id','nome_paciente','data_nascimento', 'sexo', 'email','senha']
+    model = Paciente
+    list_display = ['nome_paciente', 'usuario','data_nascimento', 'sexo', 'email']
     list_per_page = 5
 
 @admin.register(Refeicao)
